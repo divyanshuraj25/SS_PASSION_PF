@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EnquiryStatus {
+  NEW
+  CONTACTED
+  CONFIRMED
+  CLOSED
+}
+
+enum GalleryCategory {
+  ROOMS
+  COMMON_AREAS
+  EXTERIOR
+  FACILITIES
+  SURROUNDINGS
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Room {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String
+  type         String // e.g. Single Room, Double Sharing, Triple Sharing
+  occupancy    Int
+  price        Int // monthly rent in INR
+  description  String   @db.Text
+  facilities   String[] // list of facility labels for this room
+  images       String[] // ordered list of image URLs
+  isAvailable  Boolean  @default(true)
+  totalUnits   Int      @default(1)
+  availableUnits Int    @default(1)
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  enquiries    Enquiry[]
+
+  @@index([type])
+  @@index([isAvailable])
+}
+
+model Amenity {
+  id        String   @id @default(cuid())
+  name      String
+  icon      String // lucide-react icon name
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GalleryImage {
+  id        String          @id @default(cuid())
+  url       String
+  alt       String
+  category  GalleryCategory
+  sortOrder Int             @default(0)
+  createdAt DateTime        @default(now())
+
+  @@index([category])
+}
+
+model Enquiry {
+  id             String        @id @default(cuid())
+  fullName       String
+  phone          String
+  email          String
+  preferredRoomId String?
+  preferredRoom  Room?         @relation(fields: [preferredRoomId], references: [id], onDelete: SetNull)
+  moveInDate     DateTime?
+  numberOfPeople Int           @default(1)
+  message        String?       @db.Text
+  status         EnquiryStatus @default(NEW)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model FAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String   @db.Text
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SiteSetting {
+  id            String   @id @default("singleton")
+  businessName  String   @default("SS Passion PG")
+  phone         String   @default("[YOUR PHONE NUMBER]")
+  whatsapp      String   @default("[YOUR WHATSAPP NUMBER]")
+  email         String   @default("[YOUR EMAIL]")
+  address       String   @default("[YOUR FULL ADDRESS]")
+  mapsUrl       String   @default("[YOUR GOOGLE MAPS URL]")
+  mapsEmbedUrl  String   @default("[GOOGLE MAPS EMBED URL]")
+  instagramUrl  String   @default("[YOUR INSTAGRAM URL]")
+  facebookUrl   String   @default("[YOUR FACEBOOK URL]")
+  heroHeadline  String   @default("Your Comfortable Stay Starts Here.")
+  heroSubtext   String   @default("Experience comfort, convenience and a welcoming place to call home at SS Passion PG.")
+  aboutText     String   @default("SS Passion PG is built around comfortable living, cleanliness, safety, convenience and a homely environment for every resident.") @db.Text
+  updatedAt     DateTime @updatedAt
+}
