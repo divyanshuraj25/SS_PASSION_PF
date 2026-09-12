@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-ivory text-ink font-sans antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display text-ink;
+  }
+  ::selection {
+    @apply bg-emerald/20;
+  }
+  :focus-visible {
+    outline: 2px solid #2E5A4C;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-6 lg:px-8;
+  }
+  .section {
+    @apply py-20 lg:py-28;
+  }
+  .eyebrow {
+    @apply text-sm text-emerald-dark/80 font-medium;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-card bg-emerald px-6 py-3 text-paper font-medium transition-colors hover:bg-emerald-dark;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-card border border-ink/15 bg-transparent px-6 py-3 text-ink font-medium transition-colors hover:border-ink/40;
+  }
+  .card {
+    @apply rounded-card border border-line bg-paper shadow-soft;
+  }
+  .input-field {
+    @apply w-full rounded-md border border-line bg-paper px-4 py-2.5 text-ink placeholder:text-ink/40 focus:border-emerald focus:outline-none;
+  }
+  .label-field {
+    @apply mb-1.5 block text-sm font-medium text-ink/80;
+  }
+}
